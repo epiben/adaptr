@@ -16,7 +16,7 @@ calibrate(
   progress = NULL,
   base_seed = NULL,
   verbose = FALSE,
-  controls = list(n_initial = 4, n_max = 25, grid_res = 10000, tol = 0.005, pad_sd =
+  controls = list(n_initial = 4, n_max = 25, grid_res = 10000, tol = 0.005, nudge_sd =
     0.01, kappa = 2)
 )
 }
@@ -26,13 +26,20 @@ calibrate(
 
 \item{target}{double, the target value}
 
-\item{search_range}{two-element vector, the lower and upper values of the range to explore. The default is \code{c(0.9, 1)} corresponding to explore superiority thresholds between 90\% and 100\%.}
+\item{search_range}{two-element vector, the lower and upper values of the
+range to explore. The default is \code{c(0.9, 1)} corresponding to explore
+superiority thresholds between 90\% and 100\%.}
 
-\item{acq_fun}{string, name of acqusition function to use. One of \code{"ei"}, \code{"poi"} and \code{"lcb"} (default) for expected improvement, probability of improvement and lower confidence bound.}
+\item{acq_fun}{string, name of acqusition function to use. One of \code{"ei"},
+\code{"poi"} and \code{"lcb"} (default) for expected improvement, probability of
+improvement and lower confidence bound. See Details for more information.}
 
-\item{superior_only}{logical, should the trial end with superiority only (\code{TRUE}, default) or is it sufficient for the trial to be conclusive (\code{FALSE})?}
+\item{superior_only}{logical, should the trial end with superiority only
+(\code{TRUE}, default) or is it sufficient for the trial to be conclusive
+(\code{FALSE})?}
 
-\item{inferiority}{logical, optimise also the inferiority threshold (\code{TRUE}, default) as \code{1 - p(superiority)} or nor (\code{FALSE})?}
+\item{inferiority}{logical, optimise also the inferiority threshold (\code{TRUE},
+default) as \code{1 - p(superiority)} or nor (\code{FALSE})?}
 
 \item{cores}{single integer; the number of cores to run the simulations on
 using the \pkg{parallel} library. Defaults to \code{1}; may be increased to run
@@ -53,18 +60,28 @@ proceed with the next batch. If there is substantial differences in the
 simulation speeds across cores, using \code{progress} may thus increase total
 simulation times.}
 
-\item{base_seed}{integer used for reproducible results. For optimisation, this really should be provided, to ensure that the optimiser is using equivalent results; if not, random fluctuations will hamper its exploration.}
+\item{base_seed}{integer used for reproducible results. For optimisation,
+this really should be provided, to ensure that the optimiser is using
+equivalent results; if not, random fluctuations will hamper its
+exploration.}
 
-\item{verbose}{logical, should the optimiser write updates to the console and visualise its progress with plots? (default: \code{FALSE})}
+\item{verbose}{logical, should the optimiser write updates to the console and
+visualise its progress with plots? (default: \code{FALSE})}
 
-\item{optims_controls}{settings for the optimiser with sensible defaults for calibrating w.r.t the type 1 error rate. See Details.}
+\item{optims_controls}{settings for the optimiser with sensible defaults for
+calibrating w.r.t the type 1 error rate. See Details.}
 }
 \value{
-A list with four elements
+An object of class \code{calibrated_trial_spec} (inheriting from \code{trial_spec}) with updated superiority (and, if chosen, inferiority) thresholds.
+The object also has an additional elements named \code{calibration}, which is a list with three elements:
 \itemize{
-\item \code{trial_spec}: a calibrated version of the input \code{trial_spec}
-\item \code{pred_plots}: a list of plots, one for each optimisation iteration showing the predictions with standard deviations (lines + ribbon) and actually computed values (points, red = last, black = first)
-\item \code{acq_plots}: a list of plots, one for each optimisation iterations showing the values of the acquisition functions and the value at which to evaluate the trial (vertical dashed line)
+\item \code{surrogate_plots}: a list of plots, one for each optimisation iteration,
+with the surrogate function and its standard deviations (lines + ribbon),
+actually computed values (points, red = last, black = first) and the location
+of the next evaluation (vertical dashed line)
+\item \code{acquisition_plots}: a list of plots, one for each optimisation iteration,
+with the acquisition function and the locations of the next evaluation
+evaluate the trial (vertical dashed line)
 \item \code{evaluations}: a data frame with all evaluations
 }
 }
@@ -72,16 +89,22 @@ A list with four elements
 Calibrate trial specification to yield desired value of metric
 }
 \details{
-\itemize{
-\item \code{n0} the number of points where to evaluate the GP
-\item \code{max_iter} the maximum number of calibration iterations
-\item \code{grid_res} the resolution of the grid on which the acquisition function is evaluated
-\item \code{tol} tolerace, if |target - metric| <= tol, the optimiser halts
-\item \code{pad_sd} if the optimiser lands on an already explored value, a
-Gaussian noise of the form N(0, pad_sd) is added to move the optimiser to
-a new value. Most relevant with a very coarse grid and low tolerance.
-\item \code{kappa} tunable hyperparamter for the LCB acquisition function
-}
+The acquisition function uses the surrogate model to identify the next place
+to evaluate the trial. Probability of improvement estimates the next value
+most likely to yield an improvement but tends to get stuck in local minima,
+while expected improvement strikes a good balance between exploring uncertain
+regions and exploiting promising regions already found (the same applies to
+the lower confidence bound method).
+
+The \code{controls} argument must be a list specifying any of the following values
+(those unspecified will use the default values): - \code{n0} the number of points
+where to evaluate the GP - \code{max_iter} the maximum number of calibration
+iterations - \code{grid_res} the resolution of the grid on which the acquisition
+function is evaluated - \code{tol} tolerace, if |target - metric| <= tol, the
+optimiser halts - \code{pad_sd} if the optimiser lands on an already explored
+value, a Gaussian noise of the form N(0, pad_sd) is added to move the
+optimiser to a new value. Most relevant with a very coarse grid and low
+tolerance. - \code{kappa} tunable hyperparamter for the LCB acquisition function
 }
 \examples{
 [Coming]
