@@ -36,12 +36,13 @@ URL: https://incept.dk/,
     https://github.com/INCEPTdk/adaptr/,
     https://inceptdk.github.io/adaptr/
 BugReports: https://github.com/INCEPTdk/adaptr/issues/
-RoxygenNote: 7.2.2
+RoxygenNote: 7.2.3
 Suggests: 
     covr,
     ggplot2,
-    rmarkdown,
+    GPfit,
     knitr,
+    rmarkdown,
     testthat,
     vdiffr
 VignetteBuilder: knitr
