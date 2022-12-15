@@ -6,6 +6,17 @@ editor_options:
 
 # adaptr (development version)
 
+-   Calibrate trial specifications with respect to a probability of
+    superiority or probability of conclusiveness with `calibrate()`,
+    using Bayesian optimisation with a Gaussian process (also known as
+    sequential model-based optimisation; see, e.g.,
+    <https://en.wikipedia.org/wiki/Bayesian_optimization>). This first
+    version was designed to calibrate a trial to reach a desired type-1
+    or type-2 error rate (using `trial_spec` objects without and with
+    effect sizes, respectively). A future version is intended to enable
+    optimising several parameters (for example both
+    `superiority_threshold` and `soften` value).
+
 ### New features:
 
 *   Simulate follow-up (and data collection) lag: added option to have
