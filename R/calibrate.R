@@ -115,9 +115,9 @@ calibrate <- function(
   }
 
   # Helper functions
-  to_original_scale <- function(x) {
-    # Put back to original scale
-    x * diff(search_range) + search_range[1]
+  to_original_scale <- function(x, n_digits = ceiling(log10(controls$grid_res))) {
+    # Put back to original scale, round according to grid resolution
+    round(x * diff(search_range) + search_range[1], n_digits)
   }
 
   # Probability of improvement -- higher is better
