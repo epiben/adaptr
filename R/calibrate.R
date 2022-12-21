@@ -159,8 +159,7 @@ calibrate <- function(
 
     if (isTRUE(verbose)) {
       message(
-        "Iteration no. ", n,
-        ". Best threshold undtil now: ",
+        "Iteration no. ", n, ". Best threshold undtil now: ",
         to_original_scale(evaluations[which.min(evaluations[, "y"]), "x"])
       )
     }
