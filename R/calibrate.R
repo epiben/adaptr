@@ -184,15 +184,13 @@ calibrate <- function(
         # beta distribution centered at next_x with mean/sample-size parameterisation
     }
 
-    points_df <- as.data.frame(evaluations)
-    points_df$colour <- seq_len(nrow(points_df))
     x_lab <- ifelse(isTRUE(superior_only), "Prob. of superiority", "Prob. of conclusiveness")
 
     surr_plots[[n]] <- ggplot2::ggplot(df, ggplot2::aes(x = x_original_scale)) +
       ggplot2::geom_ribbon(ggplot2::aes(ymin = mu - sigma, ymax = mu + sigma), alpha = 0.2) +
       ggplot2::geom_line(ggplot2::aes(y = mu), size = 0.2) +
-      ggplot2::geom_point(ggplot2::aes(to_original_scale(x), y, colour = colour),
-                          points_df, show.legend = FALSE) +
+      ggplot2::geom_point(ggplot2::aes(to_original_scale(x), y, colour = seq_along(x)),
+                          evaluations, show.legend = FALSE) +
       ggplot2::scale_colour_gradient(low = "black", high = "red") +
       ggplot2::geom_vline(xintercept = to_original_scale(next_x), linetype = 2, size = 0.2) +
       ggplot2::labs(x = x_lab, y = NULL, title = "Gaussian process-predicted values")
