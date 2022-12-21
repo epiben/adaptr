@@ -201,9 +201,7 @@ calibrate <- function(
       ggplot2::geom_vline(xintercept = to_original_scale(next_x), linetype = 2, size = 0.2) +
       ggplot2::labs(x = x_lab, y = NULL, title = "Value of acquisition function")
 
-    if (isTRUE(verbose)) {
-      print(surr_plots[[n]])
-    }
+    if (isTRUE(verbose)) print(surr_plots[[n]])
 
     if (y_best <= controls$tol) break
 
