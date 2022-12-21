@@ -84,10 +84,10 @@ calibrate <- function(
     )
 ) {
 
-  assert_pkgs("GPfit")
+  assert_pkgs(c("GPfit", "ggplot2"))
 
   if (!is.list(controls)) {
-    warning0("The controls argument must be a list, falling back to default")
+    warning0("The controls argument must be a list but wasn't: falling back to default")
     controls <- formals()$controls
   }
   # Enforce defaults in control argument if unspecified
