@@ -196,12 +196,14 @@ calibrate <- function(
                           evaluations, show.legend = FALSE) +
       ggplot2::scale_colour_gradient(low = "black", high = "red") +
       ggplot2::geom_vline(xintercept = to_original_scale(next_x), linetype = 2, size = 0.2) +
-      ggplot2::labs(x = x_lab, y = NULL, title = "Gaussian process-predicted values")
+      ggplot2::labs(x = x_lab, y = NULL, title = "Approximate surrogate function") +
+      ggplot2::theme_minimal()
 
     acq_plots[[n]] <- ggplot2::ggplot(df, ggplot2::aes(x_original_scale, acq_value)) +
       ggplot2::geom_line(size = 0.2) +
       ggplot2::geom_vline(xintercept = to_original_scale(next_x), linetype = 2, size = 0.2) +
-      ggplot2::labs(x = x_lab, y = NULL, title = "Value of acquisition function")
+      ggplot2::labs(x = x_lab, y = NULL, title = "Value of acquisition function") +
+      ggplot2::theme_minimal()
 
     if (isTRUE(verbose)) print(surr_plots[[n]])
 
