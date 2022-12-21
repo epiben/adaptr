@@ -182,15 +182,8 @@ calibrate <- function(
     next_x <- df[next_x_idx, "x_grid"]
 
     while (next_x %in% evaluations$x) {
-      if (isTRUE(verbose)) message("next_x was ", to_original_scale(next_x), " -- nudging")
-      next_x <- next_x + rnorm(1, 0, controls$nudge_sd)
-      if (next_x > 1) { # "bounce" back inside [0, 1]
-        next_x <- 1 - (next_x - 1)
-      } else if (next_x < 0) {
-        next_x <- -next_x
-      }
-      next_x <- max(0, min(1, next_x))
-        # in the unlikely event that next_x is bounced from >1 to <0 or vice versa
+      next_x <- rbeta(1, next_x * nrow(df), (1 - next_x) * nrow(df))
+        # beta distribution centered at next_x with mean/sample-size parameterisation
     }
 
     points_df <- as.data.frame(evaluations)
