@@ -141,7 +141,7 @@ calibrate <- function(
   # Setup
   if (isTRUE(verbose)) message("Setting up initial grid evaluation")
 
-  pred_df <- data.frame(x = seq(0, 1, length.out = controls$grid_res))
+  pred_x <- seq(0, 1, length.out = controls$grid_res)
   metric <- if (superior_only) "prob_superior" else "prob_conclusive"
 
   evaluations <- data.frame(y = numeric(0), x = numeric(0))
@@ -173,6 +173,8 @@ calibrate <- function(
       corr = list(type = "exponential", power = 1.95)
     )
 
+    pred_df <- data.frame(x = union(pred_x, evaluations$x))
+      # ensure GP also predicts on nudged next_x values not on the defined grid
     df <- as.data.frame(GPfit::predict.GP(fit, xnew = pred_df)$complete_data)
     colnames(df) <- c("x_grid", "mu", "mse")
     df$x_original_scale <- to_original_scale(df$x_grid)
