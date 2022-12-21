@@ -160,7 +160,9 @@ calibrate <- function(
     if (isTRUE(verbose)) {
       message(
         "Iteration no. ", n, ". Best threshold undtil now: ",
-        to_original_scale(evaluations[which.min(evaluations[, "y"]), "x"])
+        to_original_scale(evaluations[which.min(evaluations$y), "x"]),
+        ". Best metric value: ", target, " +/- ",
+        round(min(evaluations$y), ceiling(-log10(controls$tol)))
       )
     }
 
