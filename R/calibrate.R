@@ -158,12 +158,13 @@ calibrate <- function(
     y_best <- min(evaluations$y) # best value so far
 
     if (isTRUE(verbose)) {
-      message(
-        "Iteration no. ", n, ". Best threshold undtil now: ",
+      message(sprintf(
+        "Iteration no. %s. Best threshold: %s. Best metric: %s +/- %s",
+        n,
         to_original_scale(evaluations[which.min(evaluations$y), "x"]),
-        ". Best metric value: ", target, " +/- ",
+        target,
         round(min(evaluations$y), ceiling(-log10(controls$tol)))
-      )
+      ))
     }
 
     fit <- GPfit::GP_fit(
