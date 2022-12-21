@@ -21,7 +21,7 @@
 #'   this really should be provided, to ensure that the optimiser is using
 #'   equivalent results; if not, random fluctuations will hamper its
 #'   exploration.
-#' @param optims_controls settings for the optimiser with sensible defaults for
+#' @param controls settings for the optimiser with sensible defaults for
 #'   calibrating w.r.t the type 1 error rate. See Details.
 #'
 #' @details
@@ -48,7 +48,7 @@
 #' @return An object of class `calibrated_trial_spec` (inheriting from
 #'   `trial_spec`) with updated superiority (and, if chosen, inferiority)
 #'   thresholds. The object also has an additional elements named `calibration`,
-#'   which is a list with three elements:
+#'   itself a three-element list:
 #' - `surrogate_plots`: a list of plots, one for each optimisation iteration,
 #' with the surrogate function and its standard deviations (lines + ribbon),
 #' actually computed values (points, red = last, black = first) and the location
@@ -65,21 +65,38 @@
 calibrate <- function(
     trial_spec,
     target = 0.05,
-    search_range = c(0.9, 1),
-    acq_fun = "ei",
+    search_range = c(0.5, 1),
+    acq_fun = "lcb",
     superior_only = TRUE,
     inferiority = TRUE,
     cores = 1,
-    n_rep = 100,
+    n_rep = 1000,
     progress = NULL,
     base_seed = NULL,
     verbose = FALSE,
-    controls = list(n_initial = 4, n_max = 25, grid_res = 10000, tol = 0.005, nudge_sd = 0.01, kappa = 2)
+    controls = list(
+      n_initial = 4,
+      n_max = 25,
+      grid_res = 10000,
+      tol = 0.001,
+      nudge_sd = 0.01,
+      kappa = 2
+    )
 ) {
 
   assert_pkgs("GPfit")
 
-  if (!is.list(controls)) stop0("The controls argument must be a list")
+  if (!is.list(controls)) {
+    warning0("The controls argument must be a list, falling back to default")
+    controls <- formals()$controls
+  }
+  # Enforce defaults in control argument if unspecified
+  controls$n_initial <- controls$n_initial %||% 4
+  controls$n_max <- controls$n_max %||% 25
+  controls$grid_res <- controls$grid_res %||% 10000
+  controls$tol <- controls$tol %||% 0.001
+  controls$nudge_sd <- controls$nudge_sd %||% 0.01
+  controls$kappa <- controls$kappa %||% 2
 
   # Expensive-to-evaluate function to approximate with GP
   f <- function(thres) {
@@ -120,14 +137,6 @@ calibrate <- function(
   lcb <- function(mu, sigma) {
     mu - controls$kappa * sigma
   }
-
-  # Enforce defaults in control argument if unspecified
-  controls$n_initial <- controls$n_initial %||% 4
-  controls$n_max <- controls$n_max %||% 25
-  controls$grid_res <- controls$grid_res %||% 10000
-  controls$tol <- controls$tol %||% 0.005
-  controls$nudge_sd <- controls$nudge_sd %||% 0.01
-  controls$kappa <- controls$kappa %||% 2
 
   # Setup
   if (isTRUE(verbose)) message("Setting up initial grid evaluation")
