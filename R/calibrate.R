@@ -176,10 +176,8 @@ calibrate <- function(
     df$sigma <- sqrt(df$mse)
     df$acq_value <- do.call(acq_fun, list(mu = df$mu, sigma = df$sigma))
 
-    dir <- ifelse(acq_fun == "lcb", -1, 1)
-      # invert ranking for lower conf. bound (to harmonise with POI and EI)
-    next_x_idx <- which.max(rank(dir * df$acq_value, ties.method = "random"))
-    next_x <- df[next_x_idx, "x_grid"]
+    next_x_idx <- ifelse(acq_fun == "lcb", which.min(df$acq_value), which.max(df$acq_value))
+    next_x <- df[sample(next_x_idx, 1), "x_grid"] # sample in case of ties
 
     while (next_x %in% evaluations$x) {
       next_x <- rbeta(1, next_x * nrow(df), (1 - next_x) * nrow(df))
