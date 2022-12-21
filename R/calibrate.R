@@ -176,8 +176,9 @@ calibrate <- function(
     df$sigma <- sqrt(df$mse)
     df$acq_value <- do.call(acq_fun, list(mu = df$mu, sigma = df$sigma))
 
-    next_x_idx <- ifelse(acq_fun == "lcb", which.min(df$acq_value), which.max(df$acq_value))
-    next_x <- df[sample(next_x_idx, 1), "x_grid"] # sample in case of ties
+    which_fun <- ifelse(acq_fun == "lcb", which.min, which.max)
+    next_x_idx <- which_fun(rank(df$acq_value, ties.method = "random"))
+    next_x <- df[next_x_idx, "x_grid"]
 
     while (next_x %in% evaluations$x) {
       next_x <- rbeta(1, next_x * nrow(df), (1 - next_x) * nrow(df))
